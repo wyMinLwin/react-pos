@@ -6,22 +6,22 @@ import {FaSitemap} from "react-icons/fa"
 import {GrMoney} from "react-icons/gr"
 const navbarItemsList:Array<SidebarItemType> = [
     {
-        icon: <BiSolidCategory />,
+        icon: <BiSolidCategory size="22" />,
         label: "Categories",
         url: "/categories" 
     },
     {
-        icon: <FaSitemap />,
+        icon: <FaSitemap size="22" />,
         label: "Items",
         url: "/items" 
     },
     {
-        icon: <MdGroups2 />,
+        icon: <MdGroups2 size="22" />,
         label: "Employees",
         url: "/employees" 
     },
     {
-        icon: <GrMoney />,
+        icon: <GrMoney size="22" />,
         label: "Purchase",
         url: "/purchase" 
     },
@@ -29,14 +29,13 @@ const navbarItemsList:Array<SidebarItemType> = [
 ]
 const Sidebar = () => {
     const location = useLocation();
-    console.log(location);
   return (
-    <div className="px-6 flex flex-col justify-start h-full items-start overflow-y-scroll">
+    <div className="px-6 flex flex-col justify-start h-full items-start overflow-y-scroll py-4">
         {
             navbarItemsList.map((nav) => (
-                <NavLink to={nav.url} key={nav.label} className={`flex mt-3 justify-start items-center text-important rounded-lg w-full px-8 py-4 ${nav.url === location.pathname ? 'bg-bittersweet-soft text-lightgray-soft' :'bg-lightgray-hard text-darkgray-hard'}`}>
+                <NavLink to={nav.url} key={nav.label} className={`flex flex-col justify-center items-center text-important rounded-lg w-full px-3 py-3 transition-all ${nav.url === location.pathname ? 'bg-bittersweet-soft text-lightgray-soft' :'text-darkgray-hard'}`}>
                     {nav.icon}
-                    <span className="ml-2 text-base">{nav.label}</span>
+                    <span className="text-sm">{nav.label}</span>
                 </NavLink>
             ))
         }

@@ -2,7 +2,9 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import DefaultLayout from "./layouts/DefaultLayout"
 import CategoryView from "./modules/category/entry/CategoryView"
 import PageNotFound404 from "./modules/404/entry/PageNotFound404"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 const App = () => {
+  const queryClinet = new QueryClient();
   const router = createBrowserRouter([
     {
       path:"/",
@@ -20,7 +22,9 @@ const App = () => {
     }
   ])
   return (
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClinet}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   )
 }
 

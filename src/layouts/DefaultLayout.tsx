@@ -5,12 +5,12 @@ const DefaultLayout = () => {
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-col gap-y-2 bg-lightgray-hard">
         <Navbar />
-        <div className="h-full flex-1 flex flex-row gap-x-2">
-            <div className="overflow-scroll bg-lightgray-soft rounded-md">
-                <Sidebar />
+        <div className="grow flex flex-row overflow-scroll">
+            <div className="overflow-scroll bg-lightgray-soft rounded-t-md pb-4">
+              <Sidebar />
             </div>
-            <div className="flex-1 overflow-scroll">
-                <Outlet />
+            <div className="grow overflow-scroll mx-2 bg-lightgray-soft rounded-t-md border-t-4 border-bittersweet-soft">
+              <Outlet />
             </div>
         </div>
     </div>

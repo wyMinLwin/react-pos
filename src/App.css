@@ -12,6 +12,12 @@
     animation: shaking 800ms ease;
 }
 
+.card-shadow {
+    box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.5);
+}
+
 @keyframes shaking {
     0% {
         transform: translateX(0);
