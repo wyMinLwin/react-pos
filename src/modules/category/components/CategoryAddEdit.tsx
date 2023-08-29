@@ -57,8 +57,8 @@ const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTyp
     
     const uploadCategory = async () => {
         resetError();
-        !namePattern.test(categoryName) ? setNameError("Name can't be empty and Only allowed characters and numbers") : setNameError('');
-        !isEdit &&  imageFile === null ? setImageError("Please choose an image") : setImageError('');
+        !namePattern.test(categoryName) && setNameError("Name can't be empty and Only allowed characters and numbers");
+        !isEdit &&  imageFile === null && setImageError("Please choose an image");
         if ( !namePattern.test(categoryName) ) return;
         
         if (imageFile !== null && categoryName) {

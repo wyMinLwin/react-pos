@@ -3,7 +3,6 @@ import { useClickOutside } from '../../../hooks/useClickOutside';
 import { CategoryType } from '../../../types/categoryType'
 import {BiDotsVerticalRounded} from "react-icons/bi";
 import Dialog from '../../../components/Dialog';
-import {LazyLoadImage } from 'react-lazy-load-image-component'
 import Loading from '../../../components/Loading';
 import {useDeleteCategory} from '../../../hooks/useCategories';
 import CategoryAddEdit from './CategoryAddEdit';
@@ -34,7 +33,7 @@ const CategoryCard = ({category}:CategoryCardProps) => {
     <>
         <div key={category.id} className="col-span-4 xl:col-span-3 2xl:col-span-2 d-flex flex-col justify-center items-center py-4 bg-lightgray-soft h-fit card-shadow rounded-md relative">
             <div className="w-56 h-56 bg-black flex justify-center items-center overflow-hidden mx-auto">
-                <LazyLoadImage effect="opacity" className='w-full' src={category.category_img} alt={category.category_name}/>
+                <img className='w-full' src={category.category_img} alt={category.category_name}/>
             </div>
             <p className="text-center mt-2 text-ellipsis overflow-hidden whitespace-nowrap px-4">{category.category_name}</p>
             <button className="absolute right-1 bottom-2" onClick={() => setToolButtons(true)}>
