@@ -12,7 +12,7 @@ const CategoryView = () => {
       <div className="text-end px-4">
         <button onClick={() => {setAddDialog(true)}} className="text-sm bg-bittersweet-soft text-lightgray-soft p-2 mt-2 rounded-md click-effect">Add New Category</button>
       </div>
-      <div className="w-full grid grid-cols-12 gap-x-5 gap-5 p-4 text-darkgray-hard">
+      <div className="w-full grid grid-cols-12 gap-5 p-4 text-darkgray-hard">
         {
           categories?.data?.data?.map((category:CategoryType) => (
             <CategoryCard category={category} key={category.id} />
