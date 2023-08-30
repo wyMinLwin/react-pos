@@ -6,6 +6,7 @@ import { useAddCategory, useUpdateCategory } from '../../../hooks/useCategories'
 import { BsUpload } from 'react-icons/bs'
 import { FaArrowsRotate } from 'react-icons/fa6'
 import Loading from '../../../components/Loading'
+import OutlineInput from '../../../components/OutlineInput'
 const namePattern = /^[a-zA-Z0-9\s]+$/
 
 type CategoryAddEditTypes = {
@@ -15,7 +16,6 @@ type CategoryAddEditTypes = {
     closeDialog: () => void
 }
 const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTypes) => {
-
     const [loading,setLoading] = useState(false);
     const [imageFile,setImageFile] = useState<File|null>(null);
     const [categoryName,setCategoryName] = useState(category?.category_name ?? '');
@@ -65,7 +65,7 @@ const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTyp
             setLoading(true);
             uploadImage.mutateAsync({file:imageFile,databaseName:"categories"},{
               onSuccess: (data) => {
-                if ( !isEdit ) {
+                if ( !isEdit && data ) {
                     addCategory.mutateAsync({categoryImg:data,categoryName:categoryName},
                         {
                           onSuccess: () => setBackToDefault(),
@@ -137,7 +137,7 @@ const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTyp
             {
                 imageError && <div className=" text-grapefruit-hard font-thin text-sm">{imageError}</div>
             }
-            <input className="bg-lightgray-soft px-4 py-2 rounded-md focus:outline-none" type="text" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} placeholder="Enter category name..." />
+            <OutlineInput value={categoryName} onChange={(v:string) => setCategoryName(v)} placeholder='Enter category name...'/>
             {nameError && <div className="w-40 text-grapefruit-hard font-thin text-sm">{nameError}</div>}
             <button onClick={() => uploadCategory()} className="px-4 py-2 text-lightgray-soft bg-bluejeans-soft rounded-md">{ !isEdit ? 'Upload':'Save'}</button>
             </div>

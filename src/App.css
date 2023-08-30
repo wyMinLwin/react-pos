@@ -26,6 +26,37 @@
     transform: scale(0.95);
 }
 
+.select-box {
+    box-sizing: border-box;
+    margin: 0;
+    border: solid 1px; /* Safari */
+    border-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+    border-radius: 4px;
+    padding: 15px 13px 15px;
+    width: 100%;
+    margin-top: 5px;
+    height: inherit;
+    color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.87);
+    background-color: transparent;
+    box-shadow: none; /* Firefox */
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    caret-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.select-box:focus {
+    color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    border-color:  rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+}
+
+.select-box:checked {
+    color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    border-color:  rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+}
+
+
 @keyframes shaking {
     0% {
         transform: translateX(0);

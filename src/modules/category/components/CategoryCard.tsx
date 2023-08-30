@@ -31,7 +31,7 @@ const CategoryCard = ({category}:CategoryCardProps) => {
     }
   return (
     <>
-        <div key={category.id} className="col-span-4 xl:col-span-3 2xl:col-span-2 d-flex flex-col justify-center items-center py-4 bg-lightgray-soft h-fit card-shadow rounded-md relative">
+        <div className="col-span-4 xl:col-span-3 2xl:col-span-2 d-flex flex-col justify-center items-center py-4 bg-lightgray-soft h-fit card-shadow rounded-md relative">
             <div className="w-56 h-56 bg-black flex justify-center items-center overflow-hidden mx-auto">
                 <img className='w-full' src={category.category_img} alt={category.category_name}/>
             </div>
@@ -49,8 +49,9 @@ const CategoryCard = ({category}:CategoryCardProps) => {
         </div>
         <CategoryAddEdit category={category} dialog={editDialog} closeDialog={() => setEditDialog(false)} isEdit={true} />
         <Dialog dialogModel={deleteDialog} closeDialog={() => setDeleteDialog(false)}>
-            <div className='flex flex-col justify-center items-center bg-lightgray-soft px-6 py-3 rounded-md gap-5'>
-                <div>Are you sure you want to delete this category?</div>
+            <div className='flex flex-col justify-center items-center bg-lightgray-soft px-6 py-3 rounded-md gap-3'>
+                <div className='text-lg'>Are you sure you want to delete this category?</div>
+                <div className='text-sm text-center text-grapefruit-soft'>If you delete this category, Every items inside this category will automatically be deleted.</div>
                 <div className='flex gap-5 justify-center items-center'>
                     <button onClick={() => setDeleteDialog(false)} className='bg-darkgray-soft text-lightgray-soft px-2 rounded-md click-effect'>Cancel</button>
                     <button onClick={() => deleteCategoryHandle()} className='bg-grapefruit-soft text-lightgray-soft px-2 rounded-md click-effect'>Delete</button>

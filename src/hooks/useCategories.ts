@@ -3,7 +3,7 @@ import { supabase } from "../config/superbaseClient";
 export const useGetCategories = () => useQuery({
     queryKey:["categories"],
     queryFn: async () => {
-        return await supabase.from('categories').select('*')
+        return await supabase.from('categories').select('*').neq('status','FALSE')
     },
 })
 
@@ -11,7 +11,7 @@ export const useAddCategory = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationKey: ["Add Category"],
-        mutationFn: async (data:{categoryName:string,categoryImg:string|undefined}) => {
+        mutationFn: async (data:{categoryName:string,categoryImg:string}) => {
             await supabase
                 .from('categories')
                 .insert([
@@ -46,8 +46,16 @@ export const useDeleteCategory = () => {
         mutationFn: async (id:number) => {
             await supabase
             .from('categories')
-            .delete()
-            .eq('id', id)
+            .update([
+                { status: 'FALSE'}
+            ])
+            .eq('id', id);
+            await supabase
+            .from('items')
+            .update([
+                {status: 'FALSE'}
+            ])
+            .eq('category_id',id)
         },
         onSuccess: () => queryClient.invalidateQueries({queryKey:['categories']})
     })
