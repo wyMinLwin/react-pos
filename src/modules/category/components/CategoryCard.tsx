@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useClickOutside } from '../../../hooks/useClickOutside';
 import { CategoryType } from '../../../types/categoryType'
 import {BiDotsVerticalRounded} from "react-icons/bi";
-import Dialog from '../../../components/Dialog';
 import Loading from '../../../components/Loading';
 import {useDeleteCategory} from '../../../hooks/useCategories';
 import CategoryAddEdit from './CategoryAddEdit';
+import DeleteDialog from '../../../components/DeleteDialog';
 
 type CategoryCardProps = {
     category: CategoryType
@@ -48,16 +48,10 @@ const CategoryCard = ({category}:CategoryCardProps) => {
             }
         </div>
         <CategoryAddEdit category={category} dialog={editDialog} closeDialog={() => setEditDialog(false)} isEdit={true} />
-        <Dialog dialogModel={deleteDialog} closeDialog={() => setDeleteDialog(false)}>
-            <div className='flex flex-col justify-center items-center bg-lightgray-soft px-6 py-3 rounded-md gap-3'>
-                <div className='text-lg'>Are you sure you want to delete this category?</div>
-                <div className='text-sm text-center text-grapefruit-soft'>If you delete this category, Every items inside this category will automatically be deleted.</div>
-                <div className='flex gap-5 justify-center items-center'>
-                    <button onClick={() => setDeleteDialog(false)} className='bg-darkgray-soft text-lightgray-soft px-2 rounded-md click-effect'>Cancel</button>
-                    <button onClick={() => deleteCategoryHandle()} className='bg-grapefruit-soft text-lightgray-soft px-2 rounded-md click-effect'>Delete</button>
-                </div>
-            </div>
-        </Dialog>
+        <DeleteDialog dialog={deleteDialog} closeFn={() => setDeleteDialog(false)} deleteFn={() => deleteCategoryHandle()} >
+            <div className='text-lg'>Are you sure you want to delete this category?</div>
+            <div className='text-sm text-center text-grapefruit-soft'>If you delete this category, Every items inside this category will automatically be deleted.</div>
+        </DeleteDialog>
         <Loading loadingModel={loading} />
     </>
   )

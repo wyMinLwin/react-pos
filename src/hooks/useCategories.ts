@@ -22,7 +22,12 @@ export const useAddCategory = () => {
         onSuccess:() => queryClient.invalidateQueries({queryKey:['categories']})
     })
 }
-
+export const useGetCategoriesForSelect = () => useQuery({
+    queryKey: ["categoriesSelect"],
+    queryFn: async () => {
+        return await supabase.from('categories').select('id,category_name').neq('status','FALSE');
+    }
+})
 export const useUpdateCategory = () => {
     const queryClient = useQueryClient();
     return useMutation({

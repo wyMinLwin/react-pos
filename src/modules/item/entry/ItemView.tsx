@@ -14,12 +14,15 @@ const ItemView = () => {
         </div>
         <div className="w-full grid grid-cols-12 p-4 text-darkgray-hard gap-5">
             {
-                getItems[0].data?.data?.map((item:ItemType) => (
+                getItems.data?.data && getItems.data.data.length > 0
+                ?getItems.data?.data?.map((item:ItemType) => (
                     <ItemCard item={item} key={item.id} />
                 ))
+                :<div className="text-2xl col-span-12 text-darkgray-soft absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">There is no items at moment...</div>
+                
             }
         </div>
-        <ItemAddEdit isEdit={false} dialog={addDialog} closeDialog={() => setAddDialog(false)} categories={getItems[1].data?.data || []} />
+        <ItemAddEdit isEdit={false} dialog={addDialog} closeDialog={() => setAddDialog(false)} />
     </>
   )
 }

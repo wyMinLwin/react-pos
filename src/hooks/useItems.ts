@@ -1,20 +1,10 @@
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../config/superbaseClient";
-export const useGetItems = () => useQueries({
-    queries:[
-        {
-            queryKey:["items"],
-            queryFn: async () => {
-                return await supabase.from('items').select('*').neq('status','FALSE');
-            }
-        },
-        {
-            queryKey:["categoriesSelect"],
-            queryFn: async () => {
-                return await supabase.from('categories').select('id,category_name').neq('status','FALSE')
-            },
-        }
-    ]
+export const useGetItems = () => useQuery({
+    queryKey:["items"],
+    queryFn: async () => {
+        return await supabase.from('items').select('*').neq('status','FALSE');
+    }
 })
 
 export const useAddItem = () => {
@@ -25,5 +15,29 @@ export const useAddItem = () => {
             return await supabase.from('items').insert(data)
         },
         onSuccess: () => queryClient.invalidateQueries(["items"])
+    })
+}
+
+export const useUpdateItem = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationKey:['Update Items'],
+        mutationFn: async (body:{data:object,id:number}) => {
+            return await supabase.from('items').update([{...body.data}]).eq('id',body.id) 
+        },
+        onSuccess: () => queryClient.invalidateQueries(["items"])
+    });
+}
+
+export const useDeleteItem = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationKey:['Delete Items'],
+        mutationFn: async (id:number) => {
+            return await supabase.from('items').update([
+                {status: 'FALSE'}
+            ]).eq('id',id)
+        },
+        onSuccess: () => queryClient.invalidateQueries(['items'])
     })
 }
