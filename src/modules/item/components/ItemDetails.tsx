@@ -19,7 +19,7 @@ const ItemDetails = ({dialog,closeFn,item}:ItemDetailsProps) => {
                     <div className="text-xl">{item.name}</div>
                     <div className="font-semibold ">{item.price} $</div>
                     <div className="font-semibold text-darkgray-hard">{item.code}</div>
-                    <div className="w-full h-60 overflow-y-scroll">{item.desc}</div>
+                    <div className="w-full h-60 overflow-y-scroll remove-sb">{item.desc}</div>
                 </div>
             </div>
             <div className="w-44 h-44 rounded-md overflow-hidden bg-black absolute left-1/4 -translate-x-1/4 top-1/2 -translate-y-1/2 flex justify-center items-center">

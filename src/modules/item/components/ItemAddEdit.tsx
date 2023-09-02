@@ -8,6 +8,7 @@ import { useUploadImage } from "../../../hooks/useUploadImage";
 import { useAddItem, useUpdateItem } from "../../../hooks/useItems";
 import { useGetCategoriesForSelect } from "../../../hooks/useCategories";
 import { ItemType } from "../../../types/itemType";
+import { useAppSelector } from "../../../store";
 const namePattern = /^[a-zA-Z0-9\s]+$/
 const codePattern = /^[a-zA-Z0-9\s-]+$/
 
@@ -24,7 +25,7 @@ type ItemAddEditTypes = {
 }
 
 const ItemAddEdit = ({dialog,closeDialog,isEdit,item}:ItemAddEditTypes) => {
-
+    const developerMode = useAppSelector(state => state.developerMode)
     const [error,setError] = useState("");
     const [loading,setLoading] = useState(false);
     const [itemName,setItemName] = useState("");
@@ -37,6 +38,7 @@ const ItemAddEdit = ({dialog,closeDialog,isEdit,item}:ItemAddEditTypes) => {
     const  fileUploadRef = useRef<HTMLInputElement>(null);
 
     const openFileUpload = useCallback(() => {
+        setError("");
         fileUploadRef.current?.click();
     },[]);
 
@@ -80,6 +82,11 @@ const ItemAddEdit = ({dialog,closeDialog,isEdit,item}:ItemAddEditTypes) => {
     const uploadItem = async () => {
         
         setError("");
+        if (!developerMode) {
+            setError("You don't have access to do this operation");
+            return;
+        }
+
         if (!isEdit && imageFile === null) {
             setError("Please choose an image");
             return

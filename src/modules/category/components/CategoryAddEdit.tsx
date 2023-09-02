@@ -7,6 +7,7 @@ import { BsUpload } from 'react-icons/bs'
 import { FaArrowsRotate } from 'react-icons/fa6'
 import Loading from '../../../components/Loading'
 import OutlineInput from '../../../components/OutlineInput'
+import { useAppSelector } from '../../../store'
 const namePattern = /^[a-zA-Z0-9\s]+$/
 
 type CategoryAddEditTypes = {
@@ -16,21 +17,17 @@ type CategoryAddEditTypes = {
     closeDialog: () => void
 }
 const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTypes) => {
+    const developerMode = useAppSelector(state => state.developerMode);
+    console.log(developerMode);
     const [loading,setLoading] = useState(false);
     const [imageFile,setImageFile] = useState<File|null>(null);
     const [categoryName,setCategoryName] = useState(category?.category_name ?? '');
     const [imagePath,setImagePath] = useState(category?.category_img ?? '');
-    const [nameError,setNameError] = useState("");
-    const [imageError,setImageError] = useState("");
     const  fileUploadRef = useRef<HTMLInputElement>(null);
-
-    const resetError = () => {
-        setImageError("");
-        setNameError("");
-    }
+    const [error,setError] = useState("");
 
     const openFileUpload = useCallback(() => {
-        resetError();
+        setError("");
         fileUploadRef.current?.click();
     },[]);
 
@@ -56,10 +53,18 @@ const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTyp
     const addCategory = useAddCategory();
     
     const uploadCategory = async () => {
-        resetError();
-        !namePattern.test(categoryName) && setNameError("Name can't be empty and Only allowed characters and numbers");
-        !isEdit &&  imageFile === null && setImageError("Please choose an image");
-        if ( !namePattern.test(categoryName) ) return;
+        setError("");
+        if (!developerMode) {
+            setError("You don't have access to do this operation");
+            return
+        }
+        if ( !namePattern.test(categoryName) ) {
+            setError("Name can't be empty and can't contains special characters");
+            return
+        }
+        if (!isEdit &&  imageFile === null) {
+            setError("Please choose an image");
+        }
         
         if (imageFile !== null && categoryName) {
             setLoading(true);
@@ -81,7 +86,7 @@ const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTyp
                     )
                 }
               },
-              onError: () => { setImageError("Error while uploading please try again");closeTask();}
+              onError: () => { setError("Error while uploading please try again");closeTask();}
             })
         }
         if (categoryName && isEdit && category) {
@@ -97,7 +102,6 @@ const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTyp
 
     useEffect(() => {
         if (dialog) {
-            resetError();
             setCategoryName(category?.category_name ?? '')
             setImagePath(category?.category_img ?? '')
         }
@@ -134,11 +138,9 @@ const CategoryAddEdit = ({category,isEdit,dialog,closeDialog}:CategoryAddEditTyp
                                 <FaArrowsRotate  />
                             </div>
             }
-            {
-                imageError && <div className=" text-grapefruit-hard font-thin text-sm">{imageError}</div>
-            }
+            {error && <div className="w-40 text-grapefruit-hard text-center text-sm">{error}</div>}
             <OutlineInput value={categoryName} onChange={(v:string) => setCategoryName(v)} placeholder='Enter category name...'/>
-            {nameError && <div className="w-40 text-grapefruit-hard font-thin text-sm">{nameError}</div>}
+            
             <button onClick={() => uploadCategory()} className="px-4 py-2 text-lightgray-soft bg-bluejeans-soft rounded-md">{ !isEdit ? 'Upload':'Save'}</button>
             </div>
         </Dialog>
