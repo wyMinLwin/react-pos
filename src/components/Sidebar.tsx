@@ -3,7 +3,7 @@ import { SidebarItemType } from "../types/globalTypes"
 import {BiSolidCategory} from "react-icons/bi"
 import {MdGroups2} from "react-icons/md"
 import {FaSitemap} from "react-icons/fa"
-import {GrMoney} from "react-icons/gr"
+import {PiShoppingCartSimpleBold} from "react-icons/pi"
 const navbarItemsList:Array<SidebarItemType> = [
     {
         icon: <BiSolidCategory size="22" />,
@@ -21,7 +21,7 @@ const navbarItemsList:Array<SidebarItemType> = [
         url: "/employees" 
     },
     {
-        icon: <GrMoney size="22" />,
+        icon: <PiShoppingCartSimpleBold size="22" />,
         label: "Purchase",
         url: "/purchase" 
     },

@@ -1,6 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-type developerModeType = boolean;
-const initialState:developerModeType = false;
+const initialState:boolean = false;
 const developerModeSlice = createSlice({
     name:"DeveloperMode",
     initialState,

@@ -18,6 +18,12 @@
     -moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.5);
 }
 
+.purchase-box-shadow {
+    box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.5);
+}
+
 .click-effect:active {
     box-shadow: 0px 0px 2px 0px rgba(0,1,1,0.7) inset;
     -webkit-box-shadow: 0px 0px 2px 0px rgba(0,1,1,0.7) inset;

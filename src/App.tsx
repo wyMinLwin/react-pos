@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import ItemView from "./modules/item/entry/ItemView"
 import { Provider } from "react-redux"
 import store from "./store"
+import PurchaseView from "./modules/purchase/entry/PurchaseView"
 const App = () => {
   const queryClinet = new QueryClient();
   const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const App = () => {
           path:"/items",
           element: <ItemView />
         },
+        {
+          path:"/purchase",
+          element: <PurchaseView />
+        }
       ]
     },
     {

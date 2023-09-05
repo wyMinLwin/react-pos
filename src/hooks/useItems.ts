@@ -7,6 +7,14 @@ export const useGetItems = () => useQuery({
     }
 })
 
+export const useGetItemsByCategory = (categoryId:number|null) => useQuery({
+    queryKey:["Items By Category"],
+    queryFn: async () => {
+        return await supabase.from('items').select('*').eq('category_id',categoryId);
+    },
+    enabled: typeof categoryId === 'number',
+})
+
 export const useAddItem = () => {
     const queryClient = useQueryClient()
     return useMutation({
