@@ -10,3 +10,5 @@ export type ItemType = {
     updated_at: string,
     desc: string,
 }
+
+export type CartItemtype = ItemType & { quantity:number }
