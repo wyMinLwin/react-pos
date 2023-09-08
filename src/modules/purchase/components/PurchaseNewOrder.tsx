@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import OutlineInput from '../../../components/OutlineInput'
 import { useGetCategories } from '../../../hooks/useCategories';
 import { CategoryType } from '../../../types/categoryType';
@@ -8,8 +8,9 @@ import {IoMdAdd,} from 'react-icons/io';
 import {IoTrashBin} from 'react-icons/io5';
 import './app.css';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { addToCart, removeFromCart, toogleQuantity } from '../../../store/purchaseCartSlice';
-import {FiPlus,FiMinus} from 'react-icons/fi';
+import { addToCart, removeFromCart } from '../../../store/purchaseCartSlice';
+import PurchaseCart from './PurchaseCart';
+
 const PurchaseNewOrder = () => {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(state => state.purchaseCart);
@@ -22,6 +23,7 @@ const PurchaseNewOrder = () => {
   const getCategories = useGetCategories();
   const [itemLoading,setItemLoading] = useState(false);
   const [selected,setSelected] = useState(false);
+  const [errorUserInfo,setErrorUserInfo] = useState(false);
 
   const selectItemsByCategory = useCallback( async (id:number) => {
     setItemLoading(true);
@@ -46,15 +48,17 @@ const PurchaseNewOrder = () => {
       setSelected(false);
     }
   },[currentItem,cartItems]);
+
+  const userPayload = useMemo(() => ({name:customerName,email:customterEmail,phone:customerPhone}),[customerName,customerPhone,customterEmail])
   
   return (
     <div className='w-full grow h-5/6 flex flex-col gap-y-2 pt-2'>
       <div className='h-56 grid grid-cols-3 gap-x-4 px-4'>
-        <div className=' flex flex-col justify-start px-4 py-2 purchase-box-shadow rounded-md'>
-          <div className='text-sm text-important'>Customer's Information</div>
-          <OutlineInput value={customerName} onChange={(e) => setCustomerName(e)} placeholder='Enter Customer Name...' />
-          <OutlineInput value={customterEmail} onChange={(e) => setCustomerEmail(e)} placeholder='Enter Customer Email...' />
-          <OutlineInput value={customerPhone} onChange={(e) => setCustomerPhone(e)} placeholder='Enter Customer Phone...' />
+        <div className={` flex flex-col justify-start px-4 py-2 ${errorUserInfo ? 'purchase-box-shadow-error' : 'purchase-box-shadow'} rounded-md`}>
+          <div className='text-important'>Customer's Information</div>
+          <OutlineInput value={customerName} onChange={(e) => {setCustomerName(e);setErrorUserInfo(false)}} placeholder='Enter Customer Name...' />
+          <OutlineInput value={customterEmail} onChange={(e) => {setCustomerEmail(e);setErrorUserInfo(false)}} placeholder='Enter Customer Email...' />
+          <OutlineInput value={customerPhone} onChange={(e) => {setCustomerPhone(e);setErrorUserInfo(false)}} placeholder='Enter Customer Phone...' />
         </div>
         <div className='flex flex-col justify-start h-full overflow-y-scroll gap-2 cursor-pointer px-4 py-2 purchase-box-shadow rounded-md'>
           {
@@ -104,33 +108,8 @@ const PurchaseNewOrder = () => {
           }
         </div>
       </div>
-      <div className='grow overflow-y-scroll px-4 relative'>
-        <div className='text-sm text-important'>Purchase Cart</div>
-        {cartItems.length < 1 && <div className='text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xl text-important text-darkgray-soft'>No items have been added yet.</div>}
-        <div className='grid grid-cols-12 gap-4 py-1'>        
-          {
-            cartItems.length > 1 && cartItems.map(item => (
-              <div className={`col-span-4 xl:col-span-3 p-1 flex flex-row justify-start items-start transition-all h-fit rounded-md cart-item-shadow`}   key={item.id}>
-                  <div className='w-12 h-12 flex justify-center items-center my-auto bg-black select-none'>
-                    <img src={item.url} className='w-full' alt={item.name} />
-                  </div>
-                  <div className='ml-3 flex flex-col grow justify-center items-start my-auto'>
-                    <div>{item.name}</div>
-                    <div className='text-sm'>{item.price} $</div>
-                  </div>
-                  <div className='flex flex-col justify-center items-center my-auto mr-2'>
-                    <FiPlus className="active:opacity-50 transition-all cursor-pointer" disabled={item.quantity >= 99} onClick={() => dispatch(toogleQuantity({id:item.id,type:"ADD"}))} />
-                    <div className='select-none'>{item.quantity}</div>
-                    <FiMinus className="active:opacity-50 transition-all cursor-pointer" onClick={() => item.quantity > 1 ? dispatch(toogleQuantity({id:item.id,type:"REMOVE"})) : dispatch(removeFromCart(item.id))} />
-                  </div>
-              </div>
-            ))
-          }
-        </div>
-      </div>
-      
+      <PurchaseCart customerInfo={userPayload} errorUserInfoSetter={(value:boolean) => setErrorUserInfo(value)} />
     </div>
   )
 }
-
 export default PurchaseNewOrder

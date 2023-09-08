@@ -30,6 +30,12 @@
     -moz-box-shadow: 0px 0px 1.6px 0px rgba(0,0,0,0.5);
 }
 
+.purchase-box-shadow-error {
+    box-shadow: 0px 0px 3px 0px rgba(237, 85, 101);
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(237, 85, 101);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(237, 85, 101);
+}
+
 .click-effect:active {
     box-shadow: 0px 0px 2px 0px rgba(0,1,1,0.7) inset;
     -webkit-box-shadow: 0px 0px 2px 0px rgba(0,1,1,0.7) inset;
