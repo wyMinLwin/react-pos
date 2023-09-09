@@ -49,6 +49,14 @@ const PurchaseNewOrder = () => {
     }
   },[currentItem,cartItems]);
 
+  const setPayloadDefault = useCallback(() => {
+    setCurrentCategory(null);
+    setCurrentItem(null);
+    setCustomerName("");
+    setCustomerEmail("");
+    setCustomerPhone("");
+  },[])
+
   const userPayload = useMemo(() => ({name:customerName,email:customterEmail,phone:customerPhone}),[customerName,customerPhone,customterEmail])
   
   return (
@@ -108,7 +116,10 @@ const PurchaseNewOrder = () => {
           }
         </div>
       </div>
-      <PurchaseCart customerInfo={userPayload} errorUserInfoSetter={(value:boolean) => setErrorUserInfo(value)} />
+      <PurchaseCart 
+        customerInfo={userPayload} 
+        errorUserInfoSetter={(value:boolean) => setErrorUserInfo(value)} 
+        setDefaultPayload={setPayloadDefault}/>
     </div>
   )
 }

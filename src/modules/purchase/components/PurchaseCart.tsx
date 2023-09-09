@@ -1,9 +1,11 @@
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../../store"
 import {FiPlus,FiMinus} from 'react-icons/fi';
-import { removeFromCart, toogleQuantity } from "../../../store/purchaseCartSlice";
+import { removeFromCart, resetCart, toogleQuantity } from "../../../store/purchaseCartSlice";
 import { useCallback, useMemo, useState } from "react";
 import Dialog from "../../../components/Dialog";
+import { useCreatePurchase } from "../../../hooks/usePurchase";
+import Loading from "../../../components/Loading";
 const namePattern = /^[A-Za-z\s]+$/;
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phonePattern = /^\+?\d+$/;
@@ -14,12 +16,14 @@ type PurchaseCartProps = {
     email:string,
     phone:string,
   },
-  errorUserInfoSetter: (value:boolean) => void
+  errorUserInfoSetter: (value:boolean) => void,
+  setDefaultPayload: () => void,
 }
 
-const PurchaseCart = ({customerInfo,errorUserInfoSetter}:PurchaseCartProps) => {
+const PurchaseCart = ({customerInfo,errorUserInfoSetter,setDefaultPayload}:PurchaseCartProps) => {
     const dispatch = useDispatch();
     const cartItems = useAppSelector(state => state.purchaseCart); 
+    const [loading,setLoading] = useState(false);
     const [purchaseDialog,setPurchaseDialog] = useState(false);
     const [error,setError] = useState('');
     const openPurchaseDialog = useCallback(() => {
@@ -43,9 +47,33 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter}:PurchaseCartProps) => {
     },[customerInfo,errorUserInfoSetter]);
     const totalPrice = useMemo(() => {
       let price = 0; 
-      cartItems.map(item => price += item.price);
+      cartItems.forEach(item => price += item.price);
       return price;
-    },[cartItems])
+    },[cartItems]);
+
+    const setBackToDefault = useCallback(() => {
+      setDefaultPayload();
+      setPurchaseDialog(false);
+      setError("");
+      setLoading(false);
+      dispatch(resetCart());
+    },[dispatch,setDefaultPayload])
+
+    const createPurchase = useCreatePurchase();
+    const purchaseNow = async () => {
+      setLoading(true);
+      await createPurchase.mutate({
+        'customer_name':customerInfo.name,
+        'customer_email':customerInfo.email,
+        'customer_phone':customerInfo.phone,
+        'purchase_items':JSON.stringify(cartItems),
+        'total_price':totalPrice,
+      },
+      {
+        onSuccess: () => setBackToDefault(),
+        onError: () => {setPurchaseDialog(false);setError("Error while purchasing..."),setLoading(false)}
+      });
+    }
   return (
     <div className='grow overflow-y-scroll px-4 relative'>
         <div className='flex flex-row justify-between items-center py-1'>
@@ -92,9 +120,9 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter}:PurchaseCartProps) => {
               <div className="grow  w-9/12 overflow-scroll max-h-72 ">
                 {
                   cartItems.map(item => (
-                    <div className="grid grid-cols-12 gap-3 border-b-2 mb-2 pb-2">
+                    <div className="grid grid-cols-12 gap-3 border-b-2 mb-2 pb-2" key={item.id}>
                       <span className="col-span-9 text-start">{item.name}{item.name}{item.name} x {item.quantity}</span>
-                      <span className="col-span-3 text-start text-base font-normal"> - {item.price*item.quantity} $</span>
+                      <span className="col-span-3 text-start text-base font-normal"> : {item.price*item.quantity} $</span>
                     </div>
                   ))
                 }
@@ -102,12 +130,12 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter}:PurchaseCartProps) => {
 
               <div className="w-9/12 grid grid-cols-12 gap-3">
                 <span className="col-span-9 text-important font-normal">Total Price</span>
-                <span className="col-span-3 text-base font-normal text-start"> - {totalPrice} $</span>
+                <span className="col-span-3 text-base font-normal text-start"> : {totalPrice} $</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <button onClick={() => setPurchaseDialog(false)} className='text-lightgray-soft font-normal bg-grapefruit-soft px-2 py-0.5 rounded-md click-effect'>Cancel</button>
-                <button onClick={() => setPurchaseDialog(true)} className='text-lightgray-soft font-normal bg-bluejeans-soft px-2 py-0.5 rounded-md click-effect'>Purchase</button>   
+                <button onClick={() => purchaseNow()} className='text-lightgray-soft font-normal bg-bluejeans-soft px-2 py-0.5 rounded-md click-effect'>Purchase</button>   
               </div>
             </div>
         </Dialog>
@@ -116,6 +144,7 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter}:PurchaseCartProps) => {
             {error}
           </div>
         </Dialog>
+        <Loading loadingModel={loading} />
     </div>
   )
 }

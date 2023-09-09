@@ -20,8 +20,11 @@ const purchaseCartSlice = createSlice({
                 Object.assign(foundItem,{quantity:foundItem.quantity-1});
             }
         },
+        resetCart() {
+            return []
+        }
     },
 })
 
-export const {addToCart,removeFromCart,toogleQuantity} = purchaseCartSlice.actions;
+export const {addToCart,removeFromCart,toogleQuantity,resetCart} = purchaseCartSlice.actions;
 export default purchaseCartSlice.reducer;
