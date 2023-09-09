@@ -74,8 +74,9 @@
     border-color:  rgb(var(--pure-material-primary-rgb, 33, 150, 243));
 }
 
-.remove-sb::-webkit-scrollbar{
+::-webkit-scrollbar{
     display: none;
+    scrollbar-width: none;
 }
 
 @keyframes shaking {

@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../../store"
 import {FiPlus,FiMinus} from 'react-icons/fi';
 import { removeFromCart, toogleQuantity } from "../../../store/purchaseCartSlice";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Dialog from "../../../components/Dialog";
 const namePattern = /^[A-Za-z\s]+$/;
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -41,6 +41,11 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter}:PurchaseCartProps) => {
       }
       setPurchaseDialog(true);
     },[customerInfo,errorUserInfoSetter]);
+    const totalPrice = useMemo(() => {
+      let price = 0; 
+      cartItems.map(item => price += item.price);
+      return price;
+    },[cartItems])
   return (
     <div className='grow overflow-y-scroll px-4 relative'>
         <div className='flex flex-row justify-between items-center py-1'>
@@ -69,11 +74,40 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter}:PurchaseCartProps) => {
           }
         </div>
         <Dialog dialogModel={purchaseDialog} closeDialog={() => setPurchaseDialog(false)} >
-            <div className="max-h-4/6 max-w-1/2 p-4 rounded-md bg-lightgray-soft flex flex-col justify-start items-center">
-              <div className="text-lg text-important">Are you sure you want to purchase this items?</div>
-              <div className="flex flex-row items-center gap-3">
-                <button onClick={() => setPurchaseDialog(true)} className='text-lightgray-soft bg-grapefruit-soft px-2 py-0.5 rounded-md click-effect'>Cancel</button>
-                <button onClick={() => setPurchaseDialog(true)} className='text-lightgray-soft bg-bluejeans-soft px-2 py-0.5 rounded-md click-effect'>Purchase</button>   
+            <div className="max-w-1/2 p-4 rounded-md font-thin bg-lightgray-soft flex flex-col justify-start items-center gap-3">
+              <div className="text-lg font-normal text-important">Are you sure you want to purchase this items?</div>
+            
+              <div className="w-9/12">
+                <div className="grid grid-cols-9 gap-3">
+                    <div className="text-end col-span-4">Name</div><div className="col-span-1 text-center">:</div><div className="col-span-4 texts-start text-base font-normal">{customerInfo.name}</div>
+                  </div>
+                  <div className="grid grid-cols-9 gap-3">
+                    <div className="text-end col-span-4">Email</div><div className="col-span-1 text-center">:</div><div className="col-span-4 texts-start text-base font-normal">{customerInfo.email}</div>
+                  </div>
+                  <div className="grid grid-cols-9 gap-3">
+                    <div className="text-end col-span-4">Phone</div><div className="col-span-1 text-center">:</div><div className="col-span-4 texts-start text-base font-normal">{customerInfo.phone}</div>
+                  </div>
+              </div>
+            
+              <div className="grow  w-9/12 overflow-scroll max-h-72 ">
+                {
+                  cartItems.map(item => (
+                    <div className="grid grid-cols-12 gap-3 border-b-2 mb-2 pb-2">
+                      <span className="col-span-9 text-start">{item.name}{item.name}{item.name} x {item.quantity}</span>
+                      <span className="col-span-3 text-start text-base font-normal"> - {item.price*item.quantity} $</span>
+                    </div>
+                  ))
+                }
+              </div>
+
+              <div className="w-9/12 grid grid-cols-12 gap-3">
+                <span className="col-span-9 text-important font-normal">Total Price</span>
+                <span className="col-span-3 text-base font-normal text-start"> - {totalPrice} $</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button onClick={() => setPurchaseDialog(false)} className='text-lightgray-soft font-normal bg-grapefruit-soft px-2 py-0.5 rounded-md click-effect'>Cancel</button>
+                <button onClick={() => setPurchaseDialog(true)} className='text-lightgray-soft font-normal bg-bluejeans-soft px-2 py-0.5 rounded-md click-effect'>Purchase</button>   
               </div>
             </div>
         </Dialog>
