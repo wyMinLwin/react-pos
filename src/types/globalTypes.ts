@@ -1,5 +1,6 @@
+import React from 'react';
 export type SidebarItemType = {
-    icon: JSX.Element,
+    icon: React.JSX.Element,
     label: string,
     url: string,
 }

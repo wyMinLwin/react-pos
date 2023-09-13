@@ -123,7 +123,7 @@ const ItemAddEdit = ({dialog,closeDialog,isEdit,item}:ItemAddEditTypes) => {
                         }
                       )
                 } 
-                else if (isEdit && item) {
+                else if ( item) {
                     updateItem.mutateAsync({data:{...payload,url:data},id:item.id},
                         {
                             onSuccess: () => setBackToDefault(),

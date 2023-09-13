@@ -62,7 +62,7 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter,setDefaultPayload}:Purch
     const createPurchase = useCreatePurchase();
     const purchaseNow = async () => {
       setLoading(true);
-      await createPurchase.mutate({
+      createPurchase.mutate({
         'customer_name':customerInfo.name,
         'customer_email':customerInfo.email,
         'customer_phone':customerInfo.phone,
@@ -71,7 +71,7 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter,setDefaultPayload}:Purch
       },
       {
         onSuccess: () => setBackToDefault(),
-        onError: () => {setPurchaseDialog(false);setError("Error while purchasing..."),setLoading(false)}
+        onError: () => {setPurchaseDialog(false);setError("Error while purchasing...");setLoading(false)}
       });
     }
   return (
