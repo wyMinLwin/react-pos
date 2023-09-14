@@ -47,7 +47,7 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter,setDefaultPayload}:Purch
     },[customerInfo,errorUserInfoSetter]);
     const totalPrice = useMemo(() => {
       let price = 0; 
-      cartItems.forEach(item => price += item.price);
+      cartItems.forEach(item => price += item.price * item.quantity);
       return price;
     },[cartItems]);
 
@@ -121,7 +121,7 @@ const PurchaseCart = ({customerInfo,errorUserInfoSetter,setDefaultPayload}:Purch
                 {
                   cartItems.map(item => (
                     <div className="grid grid-cols-12 gap-3 border-b-2 mb-2 pb-2" key={item.id}>
-                      <span className="col-span-9 text-start">{item.name}{item.name}{item.name} x {item.quantity}</span>
+                      <span className="col-span-9 text-start">{item.name} x {item.quantity}</span>
                       <span className="col-span-3 text-start text-base font-normal"> : {item.price*item.quantity} $</span>
                     </div>
                   ))
