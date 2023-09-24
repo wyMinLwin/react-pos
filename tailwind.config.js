@@ -7,6 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        
         "grapefruit": {
           "soft":"#ED5565",
           "hard":"#DA4453"

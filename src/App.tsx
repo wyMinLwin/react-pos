@@ -8,6 +8,8 @@ import ItemView from "./modules/item/entry/ItemView"
 import { Provider } from "react-redux"
 import store from "./store"
 import PurchaseView from "./modules/purchase/entry/PurchaseView"
+import BlankLayout from "./layouts/BlankLayout"
+import ShopView from "./modules/public/shop/ShopView"
 const App = () => {
   const queryClinet = new QueryClient();
   const router = createBrowserRouter([
@@ -16,16 +18,26 @@ const App = () => {
       element: <DefaultLayout />,
       children: [
         {
-          path:"/categories",
+          path:"categories",
           element: <CategoryView />
         },
         {
-          path:"/items",
+          path:"items",
           element: <ItemView />
         },
         {
-          path:"/purchase",
+          path:"purchase",
           element: <PurchaseView />
+        }
+      ]
+    },
+    {
+      path:"/",
+      element: <BlankLayout />,
+      children: [
+        {
+          path: "shop",
+          element: <ShopView />
         }
       ]
     },

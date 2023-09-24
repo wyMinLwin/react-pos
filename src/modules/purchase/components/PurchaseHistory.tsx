@@ -60,7 +60,7 @@ const PurchaseHistory = () => {
               <div className="grow bg-lightgray-hard p-4 rounded-md w-full grid grid-cols-2">
                 {
                   (JSON.parse(detailData?.purchase_items) as Array<CartItemtype>).map(item => (
-                    <div className="grid grid-cols-6 h-20 gap-2 my-2">
+                    <div className="grid grid-cols-6 h-20 gap-2 my-2" key={item.id}>
                       <div className="col-span-5 bg-lightgray-soft rounded-md grid grid-cols-6 px-4 gap-2">
                         <div className='w-14 h-14 flex justify-center items-center my-auto bg-black select-none col-span-2'>
                           <img src={item.url} className='w-full' alt={item.name} />
