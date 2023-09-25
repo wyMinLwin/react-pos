@@ -9,7 +9,7 @@ import { Provider } from "react-redux"
 import store from "./store"
 import PurchaseView from "./modules/purchase/entry/PurchaseView"
 import BlankLayout from "./layouts/BlankLayout"
-import ShopView from "./modules/public/shop/ShopView"
+import ShopView from "./modules/public/shop/entry/ShopView"
 const App = () => {
   const queryClinet = new QueryClient();
   const router = createBrowserRouter([

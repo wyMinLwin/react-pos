@@ -1,0 +1,80 @@
+import {FcShop} from 'react-icons/fc';
+import {AiOutlineShopping,AiOutlineHeart} from 'react-icons/ai';
+import {VscSearch} from 'react-icons/vsc';
+import { useGetItems } from '../../../../hooks/useItems';
+import { CartItemtype, ItemType } from '../../../../types/itemType';
+import { useGetCategories } from '../../../../hooks/useCategories';
+import ItemCard from '../components/ItemCard';
+import { useAppSelector } from '../../../../store';
+import { useState } from 'react';
+const ShopView = () => {
+  const getCategories = useGetCategories();
+  const getItems = useGetItems();
+  const cartItems = useAppSelector(state => state.purchaseCart);
+  const [wishList,setWishList] = useState <Array<ItemType>>(JSON.parse(localStorage.getItem("react-pos") as string) || []);
+  const addToWishlist = (item:ItemType) => {   
+    localStorage.setItem('react-pos',JSON.stringify([...wishList,item]));
+    setWishList(JSON.parse(localStorage.getItem("react-pos") as string) as Array<ItemType>);
+  };
+  const removeFromWishList = (id:number) => {
+    localStorage.setItem('react-pos',JSON.stringify(wishList.filter(wish => wish.id !== id)));
+    setWishList(JSON.parse(localStorage.getItem("react-pos") as string) as Array<ItemType>);
+  }
+  return (
+    <div className='w-full h-full flex flex-col gap-2'> 
+      <nav className='flex justify-between items-center px-8 py-2 bg-lightgray-soft'>
+        <FcShop size={42} />
+        <span className='flex items-center justify-end gap-5'>
+          <div className='hidden sm:flex justify-center items-center bg-lightgray-hard rounded-3xl py-1 px-4 gap-2 border-2'>
+            <input placeholder='Search...' className='focus:outline-none bg-lightgray-hard' />
+            <VscSearch size={20} />
+          </div>
+          <div className='relative'>
+            <AiOutlineShopping size={26} />
+            {
+              cartItems.length > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{cartItems.length}</span>
+            }
+          </div>
+          <div className='relative'>
+            <AiOutlineHeart size={26} />
+            {
+              wishList.length > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{wishList.length}</span>
+            }
+          </div>      
+        </span>
+      </nav>
+      <div className='grow overflow-y-scroll  bg-lightgray-soft rounded-t-md border-t-4 border-bittersweet-soft flex flex-col'>
+        <div className=' w-3/4 mx-auto sm:hidden flex justify-between items-center bg-lightgray-hard rounded-3xl py-1 px-3 gap-2 border-2 mt-3'>
+          <input placeholder='Search...' className='focus:outline-none bg-lightgray-hard' />
+          <VscSearch size={20} />
+        </div>
+        {
+          getItems.data?.data?.length && getItems.data?.data?.length > 0 ? 
+          <div className='grow'>
+            <div className='w-full h-fit overflow-y-scroll grid grid-cols-12 gap-4 gap-y-3 py-4 px-4 md:px-14 lg:px-10 xl:px-56 2xl:px-80'>
+            {
+              getItems.data?.data?.map((item:CartItemtype) => (
+                <ItemCard 
+                  key={item.id} 
+                  item={item} 
+                  category_name={getCategories.data?.data?.find(c => c.id === item.category_id).category_name} 
+                  in_cart={!!cartItems.find(c => c.id === item.id)} 
+                  wishList={wishList} addToWishlist={(item:ItemType) => addToWishlist(item)} removeFromWishList={(id:number) => removeFromWishList(id)}
+                  />
+              ))
+            }
+            </div>
+          </div>
+          : <div className='grow flex flex-col justify-center items-center gap-2'>
+              <p className=' text-xl md:text-3xl text-darkgray-soft'>There is no items at moments</p>
+              {
+                getItems.isLoading && <span className='simple-spinner'></span>
+              }
+          </div>
+        }
+      </div>
+    </div>
+  )
+}
+
+export default ShopView
