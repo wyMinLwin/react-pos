@@ -6,7 +6,6 @@ import { ItemType } from '../../../types/itemType';
 import { supabase } from '../../../config/superbaseClient';
 import {IoMdAdd,} from 'react-icons/io';
 import {IoTrashBin} from 'react-icons/io5';
-import './app.css';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { addToCart, removeFromCart } from '../../../store/purchaseCartSlice';
 import PurchaseCart from './PurchaseCart';

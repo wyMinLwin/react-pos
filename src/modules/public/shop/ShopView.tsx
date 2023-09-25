@@ -2,9 +2,12 @@ import {FcShop} from 'react-icons/fc';
 import {AiOutlineShopping,AiOutlineHeart,AiFillHeart} from 'react-icons/ai';
 import {HiMiniPlus} from 'react-icons/hi2'
 import {VscSearch} from 'react-icons/vsc';
+import { useGetItems } from '../../../hooks/useItems';
+import { CartItemtype } from '../../../types/itemType';
+import { useGetCategories } from '../../../hooks/useCategories';
 const ShopView = () => {
-  const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
-
+  const getCategories = useGetCategories();
+  const getItems = useGetItems();
   return (
     <div className='w-full h-full flex flex-col gap-2'> 
       <nav className='flex justify-between items-center px-8 py-2 bg-lightgray-soft'>
@@ -23,27 +26,44 @@ const ShopView = () => {
           <input placeholder='Search...' className='focus:outline-none bg-lightgray-hard' />
           <VscSearch size={20} />
         </div>
-        <div className='grow overflow-y-scroll grid grid-cols-12 gap-4 pt-4 px-3 md:px-7 lg:px-28'>
-          {
-            arr.map(item => (
-              <div key={item} className='flex flex-col gap-2 col-span-6 md:col-span-4 lg:col-span-3 2xl:col-span-2 h-64 cart-item-shadow bg-lightgray-soft user-item-shadow mx-auto p-3 rounded-2xl'>
-                <AiFillHeart className="ml-auto text-grapefruit-hard" size={24} />
-                <div className='w-36 h-36 md:w-44 md:h-44 mx-auto overflow-hidden rounded-2xl bg-red-200'></div>
-                <div className='grid grid-cols-5'>
-                  <div className='flex flex-col col-span-4'>
-                    <div className='text-sm text-important'>Name</div>
-                    <div className='text-sm text-important font-semibold'>1234 $</div>
+        {
+          getItems.data?.data?.length && getItems.data?.data?.length > 0 ? 
+          <div className='grow'>
+            <div className='w-full h-fit overflow-y-scroll grid grid-cols-12 gap-1 md:gap-4 gap-y-3 py-4 px-1 sm:px-3 md:px-14 lg:px-44'>
+            {
+              getItems.data?.data?.map((item:CartItemtype) => (
+                <div key={item.id} className='flex flex-col gap-2 col-span-6 md:col-span-4 lg:col-span-3 2xl:col-span-2 h-64 cart-item-shadow bg-lightgray-soft user-item-shadow mx-auto p-3 rounded-2xl'>
+                  {/* <AiFillHeart className="ml-auto text-grapefruit-hard" size={24} /> */}
+                  <div className='grid grid-cols-6'>
+                    <div className='col-span-5 text-ellipsis overflow-hidden text-darkgray-soft text-sm text-important font-semibold'>| {getCategories.data?.data?.find(c => c.id === item.category_id).category_name}</div>
+                    <AiOutlineHeart className="ml-auto col-span-1" size={24} />
                   </div>
-                  <div className='col-span-1 flex justify-center items-center'>
-                    <button className='bg-grapefruit-soft w-8 h-8 rounded-full click-effect flex justify-center items-center'>
-                      <HiMiniPlus className="text-lightgray-soft" size={24} />
-                    </button>
+                  <div className='w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 mx-auto overflow-hidden rounded-2xl flex justify-center items-center bg-grapefruit-soft/10'>
+                    <img className='w-full' src={item.url} alt={item.name} />
+                  </div>
+                  <div className='grid grid-cols-5 gap-1'>
+                    <div className='flex flex-col col-span-4'>
+                      <div className='text-sm text-important'>{item.name}</div>
+                      <div className='text-sm text-important font-semibold'>{item.price} $</div>
+                    </div>
+                    <div className='col-span-1 flex justify-center items-center'>
+                      <button className='bg-grapefruit-soft w-6 h-6 md:w-8 md:h-8 rounded-full click-effect flex justify-center items-center'>
+                        <HiMiniPlus className="text-lightgray-soft" size={24} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          }
-        </div>
+              ))
+            }
+            </div>
+          </div>
+          : <div className='grow flex flex-col justify-center items-center gap-2'>
+              <p className=' text-xl md:text-3xl text-darkgray-soft'>There is no items at moments</p>
+              {
+                getItems.isLoading && <span className='simple-spinner'></span>
+              }
+          </div>
+        }
       </div>
     </div>
   )
