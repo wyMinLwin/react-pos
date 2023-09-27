@@ -125,3 +125,27 @@
         transform: translateX(0);
     }
 }
+
+.drawer-in {
+    animation: drawerIn 400ms ease;
+}
+.drawer-out {
+   animation: drawerOut 400ms ease;
+}
+@keyframes drawerIn {
+    0% {
+        transform: translateX(83%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes drawerOut {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(83%);
+    }
+}

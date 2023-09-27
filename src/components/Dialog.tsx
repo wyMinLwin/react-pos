@@ -8,7 +8,7 @@ type DialogProps = {
     closeDialog?: () => void,
 } 
 const Dialog = ({children,dialogModel,closeDialog,zIndex}:DialogProps) => {
-    const ref = useClickOutside(() => closeDialog && closeDialog());
+    const ref = useClickOutside(() => closeDialog?.());
   return (
     <>
         {

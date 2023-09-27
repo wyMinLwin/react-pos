@@ -7,7 +7,9 @@ import { useGetCategories } from '../../../../hooks/useCategories';
 import ItemCard from '../components/ItemCard';
 import { useAppSelector } from '../../../../store';
 import { useState } from 'react';
+import Drawer from '../../../../components/Drawer';
 const ShopView = () => {
+  const [drawer,setDrawer] = useState(false);
   const getCategories = useGetCategories();
   const getItems = useGetItems();
   const cartItems = useAppSelector(state => state.purchaseCart);
@@ -29,14 +31,14 @@ const ShopView = () => {
             <input placeholder='Search...' className='focus:outline-none bg-lightgray-hard' />
             <VscSearch size={20} />
           </div>
-          <div className='relative'>
-            <AiOutlineShopping size={26} />
+          <div className='relative select-none cursor-pointer '>
+            <AiOutlineShopping onClick={() => setDrawer(true)} size={26} />
             {
               cartItems.length > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{cartItems.length}</span>
             }
           </div>
-          <div className='relative'>
-            <AiOutlineHeart size={26} />
+          <div className='relative select-none cursor-pointer '>
+            <AiOutlineHeart onClick={() => setDrawer(true)} size={26} />
             {
               wishList.length > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{wishList.length}</span>
             }
@@ -73,6 +75,9 @@ const ShopView = () => {
           </div>
         }
       </div>
+      <Drawer drawer={drawer} closeDrawer={() => setDrawer(false)}>
+
+      </Drawer>
     </div>
   )
 }
