@@ -25,7 +25,7 @@ const Drawer = ({drawer,closeDrawer,children}:DrawerProps) => {
         {
             drawer &&
             <div className='w-screen h-screen absolute top-0 bottom-0 left-0 right-0 z-30 bg-darkgray-soft/50 overflow-hidden'>
-                <aside ref={ref} className={`w-1/4 h-full bg-lightgray-soft border-l-2 ml-auto ${animate && animate?'drawer-in':'drawer-out'}`}>
+                <aside ref={ref} className={`w-1/4 h-full bg-lightgray-soft border-l-2 ml-auto ${animate && animate === true ?'drawer-in':'drawer-out'}`}>
                     {children}
                 </aside>
             </div>

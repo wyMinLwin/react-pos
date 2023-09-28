@@ -53,7 +53,7 @@ const ShopView = () => {
         {
           getItems.data?.data?.length && getItems.data?.data?.length > 0 ? 
           <div className='grow'>
-            <div className='w-full h-fit overflow-y-scroll grid grid-cols-12 gap-4 gap-y-3 py-4 px-4 md:px-14 lg:px-10 xl:px-56 2xl:px-80'>
+            <div className='w-full h-fit overflow-y-scroll grid grid-cols-12 gap-4 gap-y-3 py-4 px-4 md:px-14 lg:px-10 xl:px-40 2xl:px-16'>
             {
               getItems.data?.data?.map((item:CartItemtype) => (
                 <ItemCard 
