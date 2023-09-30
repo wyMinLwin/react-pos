@@ -36,11 +36,11 @@ const ItemCard = ({item,category_name,in_cart,wishList,addToWishlist,removeFromW
           <div className='col-span-1 flex justify-center items-start'>
             {
               in_cart
-              ? <button className='bg-darkgray-soft w-6 h-6 md:w-8 md:h-8 rounded-full click-effect flex justify-center items-center'>
-                  <HiTrash className="text-lightgray-soft text-sm md:text-base" onClick={() => dispatch(removeFromCart(item.id))} />
+              ? <button  onClick={() => dispatch(removeFromCart(item.id))}  className='bg-darkgray-soft w-6 h-6 md:w-8 md:h-8 rounded-full click-effect flex justify-center items-center'>
+                  <HiTrash className="text-lightgray-soft text-sm md:text-base"/>
                 </button>
-              : <button className='bg-grapefruit-soft w-6 h-6 md:w-8 md:h-8 rounded-full click-effect flex justify-center items-center'>
-                  <HiOutlineShoppingCart className="text-lightgray-soft text-sm md:text-base" onClick={() => dispatch(addToCart({...item,quantity:1}))}/>
+              : <button onClick={() => dispatch(addToCart({...item,quantity:1}))} className='bg-grapefruit-soft w-6 h-6 md:w-8 md:h-8 rounded-full click-effect flex justify-center items-center'>
+                  <HiOutlineShoppingCart className="text-lightgray-soft text-sm md:text-base"/>
                 </button>
             }
             

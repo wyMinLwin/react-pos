@@ -6,9 +6,9 @@ import { CartItemtype, ItemType } from '../../../../types/itemType';
 import { useGetCategories } from '../../../../hooks/useCategories';
 import ItemCard from '../components/ItemCard';
 import { useAppSelector } from '../../../../store';
-import { useState } from 'react';
-import Drawer from '../../../../components/Drawer';
-import {FiPlus,FiMinus} from 'react-icons/fi';
+import { useMemo, useState } from 'react';
+import CartItem from '../components/CartItem';
+
 
 const ShopView = () => {
   const [cartDrawer,setCartDrawer] = useState(false);
@@ -24,6 +24,13 @@ const ShopView = () => {
     localStorage.setItem('react-pos',JSON.stringify(wishList.filter(wish => wish.id !== id)));
     setWishList(JSON.parse(localStorage.getItem("react-pos") as string) as Array<ItemType>);
   }
+  const cartItemsCount = useMemo(() => {
+    let count = 0;
+    cartItems.forEach(item => {
+      count += item.quantity;
+    })
+    return count;
+  },[cartItems]);
   return (
     <div className='w-full h-full flex flex-col gap-2'> 
       <nav className='flex justify-between items-center px-8 py-2 bg-lightgray-soft'>
@@ -36,7 +43,7 @@ const ShopView = () => {
           <div className='relative select-none cursor-pointer '>
             <AiOutlineShopping onClick={() => setCartDrawer(true)} size={26} />
             {
-              cartItems.length > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{cartItems.length}</span>
+              cartItemsCount > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{cartItemsCount}</span>
             }
           </div>
           <div className='relative select-none cursor-pointer '>
@@ -62,7 +69,7 @@ const ShopView = () => {
                   key={item.id} 
                   item={item} 
                   category_name={getCategories.data?.data?.find(c => c.id === item.category_id).category_name} 
-                  in_cart={!!cartItems.find(c => c.id === item.id)} 
+                  in_cart={!!cartItems.find(c => c.id === item.id && c.quantity > 0)} 
                   wishList={wishList} addToWishlist={(item:ItemType) => addToWishlist(item)} removeFromWishList={(id:number) => removeFromWishList(id)}
                   />
               ))
@@ -77,29 +84,7 @@ const ShopView = () => {
           </div>
         }
       </div>
-      <Drawer drawer={cartDrawer} closeDrawer={() => setCartDrawer(false)}>
-        <div className='w-full h-full flex flex-col px-4 py-2'>
-          <h2 className='text-lg text-important'>Your Cart</h2>
-          <div className='grow overflow-y-scroll py-2 w-full'>
-            <div className='flex py-2 px-3 user-item-shadow rounded-md w-11/12 mx-auto'>
-                <div className='w-20 h-20 bg-grapefruit-soft/10 rounded-md flex justify-center items-center overflow-hidden'></div>
-                <div className='flex flex-col grow px-2'>
-                  <span className='text-important'>NAME</span>
-                  <span className='text-important'>123 $</span>
-                </div>
-                <div className='w-8 flex flex-col items-end justify-between py-1'>
-                  <button><FiPlus /></button>
-                  <span>12</span>
-                  <button><FiMinus /></button>
-                </div>
-            </div>
-          </div>
-          <div className='grid grid-cols-2 gap-x-2 px-6'>
-            <button className='col-span-1 rounded-md text-lightgray-soft py-1 click-effect bg-grapefruit-soft'>Remove All</button>
-            <button className='col-span-1 rounded-md text-lightgray-soft py-1 click-effect bg-bluejeans-soft'>Order Now</button>
-          </div>
-        </div>
-      </Drawer>
+      <CartItem drawer={cartDrawer} closeDrawer={() => setCartDrawer(false)} />
     </div>
   )
 }
