@@ -8,10 +8,12 @@ import ItemCard from '../components/ItemCard';
 import { useAppSelector } from '../../../../store';
 import { useMemo, useState } from 'react';
 import CartItem from '../components/CartItem';
+import WishItems from '../components/WishItems';
 
 
 const ShopView = () => {
   const [cartDrawer,setCartDrawer] = useState(false);
+  const [wishDrawer,setWishDrawer] = useState(false);
   const getCategories = useGetCategories();
   const getItems = useGetItems();
   const cartItems = useAppSelector(state => state.purchaseCart);
@@ -23,6 +25,10 @@ const ShopView = () => {
   const removeFromWishList = (id:number) => {
     localStorage.setItem('react-pos',JSON.stringify(wishList.filter(wish => wish.id !== id)));
     setWishList(JSON.parse(localStorage.getItem("react-pos") as string) as Array<ItemType>);
+  }
+  const clearWishList = () => {
+    localStorage.removeItem('react-pos');
+    setWishList([]);
   }
   const cartItemsCount = useMemo(() => {
     let count = 0;
@@ -43,11 +49,11 @@ const ShopView = () => {
           <div className='relative select-none cursor-pointer '>
             <AiOutlineShopping onClick={() => setCartDrawer(true)} size={26} />
             {
-              cartItemsCount > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{cartItemsCount}</span>
+              cartItems.length > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{cartItemsCount}</span>
             }
           </div>
           <div className='relative select-none cursor-pointer '>
-            <AiOutlineHeart onClick={() => {}} size={26} />
+            <AiOutlineHeart onClick={() => setWishDrawer(true)} size={26} />
             {
               wishList.length > 0 && <span className='absolute -top-1/2 -right-1/2 translate-y-1/4 -translate-x-1/4 bg-grapefruit-soft text-lightgray-soft px-1 rounded-full text-sm'>{wishList.length}</span>
             }
@@ -69,7 +75,7 @@ const ShopView = () => {
                   key={item.id} 
                   item={item} 
                   category_name={getCategories.data?.data?.find(c => c.id === item.category_id).category_name} 
-                  in_cart={!!cartItems.find(c => c.id === item.id && c.quantity > 0)} 
+                  in_cart={!!cartItems.find(c => c.id === item.id)} 
                   wishList={wishList} addToWishlist={(item:ItemType) => addToWishlist(item)} removeFromWishList={(id:number) => removeFromWishList(id)}
                   />
               ))
@@ -85,6 +91,7 @@ const ShopView = () => {
         }
       </div>
       <CartItem drawer={cartDrawer} closeDrawer={() => setCartDrawer(false)} />
+      <WishItems clearWishList={() => clearWishList()} wishList={wishList} drawer={wishDrawer} closeDrawer={() => setWishDrawer(false)} removeFromWishList={(id:number) => removeFromWishList(id)} />
     </div>
   )
 }

@@ -17,6 +17,7 @@ const purchaseCartSlice = createSlice({
             if (foundItem && actions.payload.type === "ADD") {
                 Object.assign(foundItem,{quantity:foundItem.quantity+1});
             } else if (foundItem && actions.payload.type === "REMOVE") {
+                
                 Object.assign(foundItem,{quantity:foundItem.quantity-1});
             }
         },
