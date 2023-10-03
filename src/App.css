@@ -87,6 +87,18 @@
     border-color:  rgb(var(--pure-material-primary-rgb, 33, 150, 243));
 }
 
+
+@media (max-width: 330px) {
+    .order-confirm-dialog-small {
+        width: 17rem !important;
+    }
+}
+@media (max-width: 285px) {
+    .order-confirm-dialog-small {
+        width: 14rem !important;
+    }
+}
+
 ::-webkit-scrollbar{
     display: none;
     scrollbar-width: none;

@@ -30,8 +30,8 @@ const ItemCard = ({item,category_name,in_cart,wishList,addToWishlist,removeFromW
         </div>
         <div className='grid grid-cols-5 gap-1'>
           <div className='flex flex-col col-span-4'>
-            <div className='text-sm text-important w-full text-ellipsis overflow-hidden'>{item.name}</div>
-            <div className='text-sm text-important font-semibold'>{item.price} $</div>
+            <div className='text-xs font-semibold sm:font-normal sm:text-sm text-important w-full text-ellipsis overflow-hidden'>{item.name}</div>
+            <div className='text-xs font-bold sm:font-semibold sm:text-sm text-important'>{item.price} $</div>
           </div>
           <div className='col-span-1 flex justify-center items-start'>
             {
