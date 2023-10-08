@@ -4,13 +4,14 @@ type OutlineInputProps = {
     onChange: (v:string) => void,
     placeholder: string,
     type?: "text" | "number",
-    className?: string
+    className?: string,
+    disabled?: boolean
 }
-const OutlineInput = (props:OutlineInputProps) => {
+const OutlineInput = ({value,onChange,placeholder,type,className,disabled = false}:OutlineInputProps) => {
   return (
-    <label className={`outline-input ${props.className}`}>
-        <input type={props.type ? props.type :'text'} placeholder=' ' value={props.value} onChange={(e) => props.onChange(e.target.value)} />
-        <span>{props.placeholder}</span>
+    <label className={`outline-input ${className}`}>
+        <input disabled={disabled} type={type ? type :'text'} placeholder=' ' value={value} onChange={(e) => onChange(e.target.value)} />
+        <span>{placeholder}</span>
     </label>
   )
 }
