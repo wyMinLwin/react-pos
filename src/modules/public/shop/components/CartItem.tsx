@@ -16,8 +16,18 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
     const dispatch = useAppDispatch();
     const [orderConfirmDialog,setOrderConfrimDialog] = useState(false);
     const clickOutsideRef = useClickOutside(() => setOrderConfrimDialog(false));
-    const [kbzPayName,setKbzPayName] = useState('');
-    const [paymentMethod,setPaymentMethod] = useState<number>(null!);
+    const [customerName,setCustomerName] = useState("");
+    const [customerPhone,setCustomerPhone] = useState("");
+    const [paymentMethod,setPaymentMethod] = useState<number>();
+    const [kbzPayName,setKbzPayName] = useState("");
+    const [kbzPayPhone,setKbzPayPhone] = useState("");
+    const [transitionId,setTransitionId] = useState("");
+    const [paidAmount,setPaidAmount] = useState<number>(null!);
+    const [saveInfo,setSaveInfo] = useState<boolean>(JSON.parse(localStorage.getItem('react-pos-save-info') as string) as boolean);
+    const toggleSave = () => {
+        setSaveInfo(prevSaveInfo => !prevSaveInfo);
+        localStorage.setItem('react-pos-save-info',JSON.stringify(saveInfo))
+    }
   return (
     <>
         <Drawer unClick={orderConfirmDialog} drawer={drawer} closeDrawer={() => closeDrawer()}>
@@ -60,8 +70,8 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                         <div className={`grid ${ paymentMethod === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} gap-5`}>
                             <div className='cols-span-1 transition-all duration-100'>
                                 <h2 className='text-lg text-start w-full'>Customer Info</h2>
-                                <OutlineInput className='w-full' value={kbzPayName} onChange={(value) => setKbzPayName(value) } placeholder='Enter Customer Name...' />
-                                <OutlineInput className='w-full' value={kbzPayName} onChange={(value) => setKbzPayName(value) } placeholder='Enter Customer Phone...' />
+                                <OutlineInput className='w-full' value={customerName} onChange={(value) => setCustomerName(value) } placeholder='Enter Customer Name...' />
+                                <OutlineInput className='w-full' value={customerPhone} onChange={(value) => setCustomerPhone(value) } placeholder='Enter Customer Phone...' />
                                 <OutlineInput className='w-full' disabled value={3000} onChange={() => {}} placeholder='Delivery Price...' />
                                 <select className="select-box" style={{'color':"#7D7E7F"}} value={paymentMethod} onChange={(e) => setPaymentMethod(Number(e.target.value))} >
                                     <option>Select Payment Method</option>
@@ -74,17 +84,17 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                                 <div className='cols-span-1 transition-all duration-100'>
                                     <h2 className='text-lg text-start w-full'>Payment Info</h2>
                                     <OutlineInput className='w-full' value={kbzPayName} onChange={(value) => setKbzPayName(value) } placeholder='Enter KBZPay Name...' />
-                                    <OutlineInput type='number' className='w-full' value={kbzPayName} onChange={(value) => setKbzPayName(value) } placeholder='Enter KBZPay Number...' />
-                                    <OutlineInput type='number' className='w-full' value={kbzPayName} onChange={(value) => setKbzPayName(value) } placeholder='Enter Payment Transition Id...' />
-                                    <OutlineInput type='number' className='w-full' value={kbzPayName} onChange={(value) => setKbzPayName(value) } placeholder='Enter Paid Amount...' />
+                                    <OutlineInput type='number' className='w-full' value={kbzPayPhone} onChange={(value) => setKbzPayPhone(value) } placeholder='Enter KBZPay Number...' />
+                                    <OutlineInput type='number' className='w-full' value={transitionId} onChange={(value) => setTransitionId(value) } placeholder='Enter Payment Transition Id...' />
+                                    <OutlineInput type='number' className='w-full' value={paidAmount} onChange={(value) => setPaidAmount(Number(value)) } placeholder='Enter Paid Amount...' />
                                 </div>
                             }
                         </div>
                         <div className='grid grid-cols-1 sm:grid-cols-2 w-full gap-2'>
-                            <div className='flex justify-end sm:justify-start items-center gap-1'>
-                                <div>Save Info</div>
-                                <span className='w-6 h-6 border-2 border-darkgray-soft rounded-sm flex justify-center items-center'>
-                                    <FaCheck size={16} className="text-darkgray-soft" />
+                            <div className='flex justify-end sm:justify-start items-center gap-1 text-darkgray-soft'>
+                                <div className='font-semibold'>Save Info</div>
+                                <span onClick={() => toggleSave()} className='w-6 h-6 border-2 border-darkgray-soft rounded-lg flex justify-center items-center'>
+                                    { saveInfo && <FaCheck size={16} />}
                                 </span>
                             </div>
                             <div className='flex justify-end items-center gap-x-1 w-full'>
