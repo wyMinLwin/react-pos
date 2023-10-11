@@ -2,7 +2,7 @@ import Drawer from '../../../../components/Drawer';
 import {FiPlus,FiMinus} from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { removeFromCart, resetCart, toogleQuantity } from '../../../../store/purchaseCartSlice';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Dialog from '../../../../components/Dialog';
 import { useClickOutside } from '../../../../hooks/useClickOutside';
 import OutlineInput from '../../../../components/OutlineInput';
@@ -15,7 +15,6 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
     const cartItems = useAppSelector(state => state.purchaseCart);
     const dispatch = useAppDispatch();
     const [orderConfirmDialog,setOrderConfrimDialog] = useState(false);
-    const clickOutsideRef = useClickOutside(() => setOrderConfrimDialog(false));
     const [customerName,setCustomerName] = useState("");
     const [customerPhone,setCustomerPhone] = useState("");
     const [paymentMethod,setPaymentMethod] = useState<number>();
@@ -23,11 +22,52 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
     const [kbzPayPhone,setKbzPayPhone] = useState("");
     const [transitionId,setTransitionId] = useState("");
     const [paidAmount,setPaidAmount] = useState<number>(null!);
-    const [saveInfo,setSaveInfo] = useState<boolean>(JSON.parse(localStorage.getItem('react-pos-save-info') as string) as boolean);
+    const [saveInfo,setSaveInfo] = useState<boolean>(JSON.parse(localStorage.getItem('react-pos-save-info') as string) as boolean || false);
     const toggleSave = () => {
         setSaveInfo(prevSaveInfo => !prevSaveInfo);
-        localStorage.setItem('react-pos-save-info',JSON.stringify(saveInfo))
     }
+    useEffect(() => {
+        localStorage.setItem('react-pos-save-info',JSON.stringify(saveInfo));
+        console.log(paymentMethod)
+        if (saveInfo && orderConfirmDialog) {
+            localStorage.setItem('react-pos-customer-name',JSON.stringify(customerName));
+            localStorage.setItem('react-pos-customer-phone',JSON.stringify(customerPhone));
+            localStorage.setItem('react-pos-payment-method',JSON.stringify(paymentMethod));
+            localStorage.setItem('react-pos-kbzpayname',JSON.stringify(kbzPayName));
+            localStorage.setItem('react-pos-kbzpayphone',JSON.stringify(kbzPayPhone));
+        } else if (!saveInfo && !orderConfirmDialog) {
+            localStorage.removeItem('react-pos-customer-name');
+            localStorage.removeItem('react-pos-customer-phone');
+            localStorage.removeItem('react-pos-payment-method');
+            localStorage.removeItem('react-pos-kbzpayname');
+            localStorage.removeItem('react-pos-kbzpayphone');
+        }
+    },[orderConfirmDialog,saveInfo,customerName,customerPhone,paymentMethod,kbzPayName,kbzPayPhone])
+
+    useEffect(() => {
+        setCustomerName(JSON.parse(localStorage.getItem('react-pos-customer-name') as string) as string || '');
+        setCustomerPhone(JSON.parse(localStorage.getItem('react-pos-customer-phone') as string) as string || '');
+        setPaymentMethod(JSON.parse(localStorage.getItem('react-pos-payment-method') as string) as number || 0);
+        setKbzPayName(JSON.parse(localStorage.getItem('react-pos-kbzpayname') as string) as string || '');
+        setKbzPayPhone(JSON.parse(localStorage.getItem('react-pos-kbzpayphone') as string) as string || '');
+    },[orderConfirmDialog]);
+
+    const resetValue = () => {
+        setCustomerName('');
+        setCustomerPhone('');
+        setPaymentMethod(0);
+        setKbzPayName('');
+        setKbzPayPhone('');
+        setTransitionId('');
+        setPaidAmount(0);
+    };
+    const closeOrderConfirmDialog = () => {
+        setOrderConfrimDialog(false);
+        resetValue();
+    }
+
+    const clickOutsideRef = useClickOutside(() => closeOrderConfirmDialog());
+
   return (
     <>
         <Drawer unClick={orderConfirmDialog} drawer={drawer} closeDrawer={() => closeDrawer()}>
@@ -64,7 +104,7 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                     <button onClick={() => setOrderConfrimDialog(true)} className='col-span-1 rounded-md text-lightgray-soft py-1 click-effect bg-bluejeans-soft'>Order Now</button>
                 </div>
             </div>
-            <Dialog dialogModel={orderConfirmDialog} closeDialog={() => setOrderConfrimDialog(false)} >    
+            <Dialog dialogModel={orderConfirmDialog} closeDialog={() => {closeOrderConfirmDialog()}} >    
                 <div className='w-screen h-screen bg-transparent py-5 flex justify-center items-start z-30'>
                     <div ref={clickOutsideRef} className={`w-11/12 h-fit max-h-full my-auto sm:w-5/12 md:w-1/2 ${ paymentMethod === 2 ? 'lg:w-7/12 xl:w-5/12' : 'lg:w-2/5 xl:w-3/12'} transition-all duration-100 p-4 z-40 rounded-md bg-lightgray-soft flex flex-col justify-start items-center gap-2 overflow-y-scroll`}>
                         <div className={`grid ${ paymentMethod === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} gap-5`}>
@@ -74,7 +114,7 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                                 <OutlineInput className='w-full' value={customerPhone} onChange={(value) => setCustomerPhone(value) } placeholder='Enter Customer Phone...' />
                                 <OutlineInput className='w-full' disabled value={3000} onChange={() => {}} placeholder='Delivery Price...' />
                                 <select className="select-box" style={{'color':"#7D7E7F"}} value={paymentMethod} onChange={(e) => setPaymentMethod(Number(e.target.value))} >
-                                    <option>Select Payment Method</option>
+                                    <option value={0}>Select Payment Method</option>
                                     <option value={1}>COD</option>
                                     <option value={2}>KBZ Pay</option>
                                 </select>
