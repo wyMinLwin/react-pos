@@ -10,7 +10,7 @@ type DrawerProps = {
 const Drawer = ({drawer,closeDrawer,children,unClick=false}:DrawerProps) => {
     const [animate,setAnimate] = useState<boolean|null>(null);
     const closeDrawerTimeout = () => {
-        if (unClick == true) return
+        if (unClick) return;
         setAnimate(false);
         setTimeout(() => {
             closeDrawer();

@@ -2,11 +2,17 @@ import Drawer from '../../../../components/Drawer';
 import {FiPlus,FiMinus} from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { removeFromCart, resetCart, toogleQuantity } from '../../../../store/purchaseCartSlice';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Dialog from '../../../../components/Dialog';
 import { useClickOutside } from '../../../../hooks/useClickOutside';
 import OutlineInput from '../../../../components/OutlineInput';
-import {FaCheck} from 'react-icons/fa6'
+import {FaCheck} from 'react-icons/fa6';
+import {MdClose} from 'react-icons/md';
+import { useCreatePublicOrders } from '../../../../hooks/usePublicOrders';
+import Loading from '../../../../components/Loading';
+const namePattern = /^[a-zA-Z\s]+$/
+const phonePattern = /^\+?\d+$/;
+
 type CartItemProps = {
     drawer: boolean;
     closeDrawer: () => void;
@@ -21,14 +27,15 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
     const [kbzPayName,setKbzPayName] = useState("");
     const [kbzPayPhone,setKbzPayPhone] = useState("");
     const [transitionId,setTransitionId] = useState("");
-    const [paidAmount,setPaidAmount] = useState<number>(null!);
+    const [paidAmount,setPaidAmount] = useState<number>(0);
     const [saveInfo,setSaveInfo] = useState<boolean>(JSON.parse(localStorage.getItem('react-pos-save-info') as string) as boolean || false);
+    const [error,setError] = useState('');
+
     const toggleSave = () => {
         setSaveInfo(prevSaveInfo => !prevSaveInfo);
     }
     useEffect(() => {
         localStorage.setItem('react-pos-save-info',JSON.stringify(saveInfo));
-        console.log(paymentMethod)
         if (saveInfo && orderConfirmDialog) {
             localStorage.setItem('react-pos-customer-name',JSON.stringify(customerName));
             localStorage.setItem('react-pos-customer-phone',JSON.stringify(customerPhone));
@@ -61,16 +68,88 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
         setTransitionId('');
         setPaidAmount(0);
     };
+
     const closeOrderConfirmDialog = () => {
+        if(error) return
         setOrderConfrimDialog(false);
         resetValue();
     }
 
-    const clickOutsideRef = useClickOutside(() => closeOrderConfirmDialog());
+    const clickOutsideInfoRef = useClickOutside(() => closeOrderConfirmDialog());
+
+    const publicOrders = useCreatePublicOrders();
+
+    const totalPrice = useMemo(() => {
+        let total = 0;
+        cartItems.forEach(item => {
+            total += item.price * item.quantity;
+        });
+        return total;
+    },[cartItems]);
+    
+    const createPublicOrders = async () => {
+        if(!namePattern.test(customerName)){
+            setError("Customer name only allow letters.");
+            return;
+        }
+        if (!phonePattern.test(customerPhone)) {
+            setError("Enter a valid phone number.");
+            return;
+        }  
+        if (!namePattern.test(kbzPayName)) {
+            setError("KBZPay name only allow letters.");
+            return;
+        }  
+        if (!phonePattern.test(kbzPayPhone)){
+            setError("KBZPay phone number only allow letters.");
+            return;
+        }
+        if (paymentMethod === 0) {
+            setError("Please select a payment method.");
+            return
+        }
+
+        if (paymentMethod === 2) {
+            if(transitionId.length < 1) {
+                setError("Please enter transition Id");
+                return;
+            }
+            if (isNaN(paidAmount)) {
+                setError("Paid amount only allow numbers");
+                return
+            }
+            if (isNaN(Number(transitionId))) {
+                console.log('reach')
+                setError("Paid amount only allow numbers");
+                return
+            }
+        }
+
+        publicOrders.mutateAsync(
+            {
+                customer_name: customerName,
+                customer_phone: customerPhone,
+                purchase_items: JSON.stringify(cartItems),
+                total_price: totalPrice,
+                deli_price: 3000,
+                paid_amount: paidAmount,
+                payment_method: paymentMethod,
+                transition_id: transitionId,
+                kbz_payname: kbzPayName,
+                kbz_phno: kbzPayPhone,
+                order_status: 1
+            }
+        );
+        if (await publicOrders.isSuccess) {
+            closeOrderConfirmDialog();
+            dispatch(resetCart());
+            closeDrawer();
+        }
+    }
 
   return (
     <>
-        <Drawer unClick={orderConfirmDialog} drawer={drawer} closeDrawer={() => closeDrawer()}>
+        <Drawer unClick={orderConfirmDialog || !!error} drawer={drawer} closeDrawer={() => {closeDrawer()}}>
             <div className='w-full h-full flex flex-col px-4 py-2'>
                 <h2 className='text-lg grow-0 text-important'>Your Cart</h2>
                 <div className='grow overflow-y-scroll py-2 w-full'>
@@ -101,12 +180,12 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                 </div>
                 <div className='grow-0 grid grid-cols-2 gap-x-2 px-6'>
                     <button onClick={() => dispatch(resetCart())} className='col-span-1 rounded-md text-lightgray-soft py-1 click-effect bg-grapefruit-soft'>Remove All</button>
-                    <button onClick={() => setOrderConfrimDialog(true)} className='col-span-1 rounded-md text-lightgray-soft py-1 click-effect bg-bluejeans-soft'>Order Now</button>
+                    <button disabled={!cartItems.length} onClick={() => setOrderConfrimDialog(true)} className='col-span-1 rounded-md text-lightgray-soft py-1 click-effect bg-bluejeans-soft'>Order Now</button>
                 </div>
             </div>
-            <Dialog dialogModel={orderConfirmDialog} closeDialog={() => {closeOrderConfirmDialog()}} >    
-                <div className='w-screen h-screen bg-transparent py-5 flex justify-center items-start z-30'>
-                    <div ref={clickOutsideRef} className={`w-11/12 h-fit max-h-full my-auto sm:w-5/12 md:w-1/2 ${ paymentMethod === 2 ? 'lg:w-7/12 xl:w-5/12' : 'lg:w-2/5 xl:w-3/12'} transition-all duration-100 p-4 z-40 rounded-md bg-lightgray-soft flex flex-col justify-start items-center gap-2 overflow-y-scroll`}>
+            <Dialog dialogModel={orderConfirmDialog} >    
+                <div className={`w-screen h-screen bg-transparent py-5 flex justify-center items-start z-30`}>
+                    <div ref={clickOutsideInfoRef} className={`w-11/12 h-fit max-h-full my-auto sm:w-5/12 md:w-1/2 ${ paymentMethod === 2 ? 'lg:w-7/12 xl:w-5/12' : 'lg:w-2/5 xl:w-3/12'} transition-all duration-100 p-4 z-40 rounded-md bg-lightgray-soft flex flex-col justify-start items-center gap-2 overflow-y-scroll`}>
                         <div className={`grid ${ paymentMethod === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} gap-5`}>
                             <div className='cols-span-1 transition-all duration-100'>
                                 <h2 className='text-lg text-start w-full'>Customer Info</h2>
@@ -130,6 +209,9 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                                 </div>
                             }
                         </div>
+                        <div className='w-full text-end text-lg text-important'>
+                            {totalPrice} $
+                        </div>
                         <div className='grid grid-cols-1 sm:grid-cols-2 w-full gap-2'>
                             <div className='flex justify-end sm:justify-start items-center gap-1 text-darkgray-soft'>
                                 <div className='font-semibold'>Save Info</div>
@@ -139,12 +221,19 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                             </div>
                             <div className='flex justify-end items-center gap-x-1 w-full'>
                                 <button onClick={() => {}} className='rounded-md w-fit text-lightgray-soft px-2 py-1 click-effect bg-grapefruit-soft'>Cancel</button>
-                                <button onClick={() => {}} className='rounded-md w-fit text-lightgray-soft px-2 py-1 click-effect bg-bluejeans-soft'>Confirm</button>
+                                <button onClick={() => createPublicOrders()} className='rounded-md w-fit text-lightgray-soft px-2 py-1 click-effect bg-bluejeans-soft'>Confirm</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </Dialog>
+            <Dialog dialogModel = {!! error}>
+                <div className='bg-lightgray-soft rounded-md p-8 relative'>
+                    <span className='text-grapefruit-soft italic text-important'>{error}</span>
+                    <button onClick={() => setError("")} className='absolute top-2 right-2'><MdClose /></button>
+                </div>
+            </Dialog>
+            <Loading loadingModel={publicOrders.isLoading} />
         </Drawer>
     </>
   )
