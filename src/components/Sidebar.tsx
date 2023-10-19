@@ -4,6 +4,7 @@ import {BiSolidCategory} from "react-icons/bi"
 import {MdGroups2} from "react-icons/md"
 import {FaSitemap} from "react-icons/fa"
 import {PiShoppingCartSimpleBold} from "react-icons/pi"
+import {LiaClipboardListSolid} from "react-icons/lia"
 const navbarItemsList:Array<SidebarItemType> = [
     {
         icon: <BiSolidCategory size="22" />,
@@ -25,6 +26,11 @@ const navbarItemsList:Array<SidebarItemType> = [
         label: "Purchase",
         url: "/purchase" 
     },
+    {
+        icon: <LiaClipboardListSolid size="22" />,
+        label: "Orders",
+        url: "/orders"
+    }
     
 ]
 const Sidebar = () => {

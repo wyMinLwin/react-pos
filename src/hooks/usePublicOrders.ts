@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "../config/superbaseClient";
 
 export const useCreatePublicOrders = () => {
@@ -13,3 +13,10 @@ export const useCreatePublicOrders = () => {
         }
     })
 }
+
+export const useGetPublicOrders = () => useQuery({
+    queryKey:["Public Orders"],
+    queryFn: async () => {
+        return await supabase.from("public_orders").select('*').eq('order_status',1);
+    }
+})

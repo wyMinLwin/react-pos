@@ -2,7 +2,7 @@ import Drawer from '../../../../components/Drawer';
 import {FiPlus,FiMinus} from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { removeFromCart, resetCart, toogleQuantity } from '../../../../store/purchaseCartSlice';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Dialog from '../../../../components/Dialog';
 import { useClickOutside } from '../../../../hooks/useClickOutside';
 import OutlineInput from '../../../../components/OutlineInput';
@@ -59,7 +59,8 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
         setKbzPayPhone(JSON.parse(localStorage.getItem('react-pos-kbzpayphone') as string) as string || '');
     },[orderConfirmDialog]);
 
-    const resetValue = () => {
+    
+    const resetValue = useCallback(() => {
         setCustomerName('');
         setCustomerPhone('');
         setPaymentMethod(0);
@@ -67,13 +68,13 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
         setKbzPayPhone('');
         setTransitionId('');
         setPaidAmount(0);
-    };
+    },[]);
 
-    const closeOrderConfirmDialog = () => {
+    const closeOrderConfirmDialog = useCallback(() => {
         if(error) return
         setOrderConfrimDialog(false);
         resetValue();
-    }
+    },[error,resetValue])
 
     const clickOutsideInfoRef = useClickOutside(() => closeOrderConfirmDialog());
 
@@ -96,20 +97,21 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
             setError("Enter a valid phone number.");
             return;
         }  
-        if (!namePattern.test(kbzPayName)) {
-            setError("KBZPay name only allow letters.");
-            return;
-        }  
-        if (!phonePattern.test(kbzPayPhone)){
-            setError("KBZPay phone number only allow letters.");
-            return;
-        }
+        
         if (paymentMethod === 0) {
             setError("Please select a payment method.");
             return
         }
 
         if (paymentMethod === 2) {
+            if (!namePattern.test(kbzPayName)) {
+                setError("KBZPay name only allow letters.");
+                return;
+            }  
+            if (!phonePattern.test(kbzPayPhone)){
+                setError("KBZPay phone number only allow letters.");
+                return;
+            }
             if(transitionId.length < 1) {
                 setError("Please enter transition Id");
                 return;
@@ -140,12 +142,16 @@ const CartItem = ({drawer,closeDrawer}:CartItemProps) => {
                 order_status: 1
             }
         );
-        if (await publicOrders.isSuccess) {
+    }
+
+    useEffect(() => {
+        if (publicOrders.isSuccess) {
             closeOrderConfirmDialog();
             dispatch(resetCart());
             closeDrawer();
         }
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[publicOrders.isSuccess,dispatch,closeOrderConfirmDialog])
 
   return (
     <>
